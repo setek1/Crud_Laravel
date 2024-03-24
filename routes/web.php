@@ -1,5 +1,6 @@
 <?php
 
+use app\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts/home');
 });
+
+#Resorce ayuda a general las tipicas clases de CRUD 
+Route::resource('/users', UsersController::class);
+#Sino crearlo cada uno por si solo 
+#Route::get('/users',[UsersController::class,'index']);
+#Route::get('/users/create',[UsersController::class,'create']);
