@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -12,7 +13,8 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        $users=DB::table('Usuarios')->get();
+        return view('layouts/home', ['msg'=>null,'users'=>$users]);
     }
 
     /**
@@ -28,7 +30,23 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre'=>'required|max:199',
+            'email'=>'required|email',
+            'phone'=>'required|',
+            'edad'=>'required|',
+
+        ]);
+
+        DB::table('Usuarios')->insert([
+            'name'=>$request->input('nombre'),
+            'email'=>$request->input('email'),
+            'phone'=>$request->input('phone'),
+            'age'=>$request->input('edad'),
+
+        ]);
+
+        return view('layouts/home', ['msg'=>'Registro Guardado','users' => DB::table('Usuarios')->get()]);
     }
 
     /**
@@ -53,6 +71,22 @@ class UsersController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $userCount = DB::table('Usuarios')
+        ->where('id', $id)
+        ->update([
+            'name' => $request->input('nombre'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'age' => $request->input('edad'),
+        ]);
+
+        if ($userCount === 0) {
+            $msg = 'Usuario no encontrado';
+        } else {
+            $msg = 'Usuario actualizado exitosamente';
+        }
+
+        return view('layouts/home', ['msg' => $msg, 'users' => DB::table('Usuarios')->get()]);
     }
 
     /**
@@ -60,6 +94,16 @@ class UsersController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $userCount = DB::table('Usuarios')
+        ->where('id', $id)
+        ->delete();
+
+        if ($userCount === 0) {
+            $msg = 'Usuario no encontrado';
+        } else {
+            $msg = 'Usuario eliminado exitosamente';
+        }
+        
+        return view('layouts/home', ['msg' => $msg, 'users' => DB::table('Usuarios')->get()]);
     }
 }
